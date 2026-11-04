@@ -1,0 +1,240 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-rubik), system-ui, sans-serif;
+  --font-sans: var(--font-nunito), system-ui, sans-serif;
+}
+
+@theme {
+  --color-sky: #85c7e8;
+  --color-sky-soft: #d6eefa;
+  --color-sun: #f8d66d;
+  --color-sun-soft: #fdf0c4;
+  --color-leaf: #a8d9aa;
+  --color-leaf-soft: #dff2e0;
+  --color-milk: #fff6e7;
+  --color-peach: #f3b5a8;
+  --color-peach-soft: #fbe5df;
+  --color-ink: #26354b;
+  --color-ink-soft: #4a5a72;
+  --color-wa: #0f7f40;
+  --color-wa-hover: #0c6c36;
+
+  --breakpoint-desk: 68.75rem;
+
+  --shadow-soft: 0 12px 32px -14px rgb(38 53 75 / 0.28);
+  --shadow-lift: 0 22px 44px -18px rgb(38 53 75 / 0.36);
+}
+
+/* Только светлая схема, независимо от настроек браузера и системы. */
+:root {
+  color-scheme: only light;
+  --header-offset: 60px;
+}
+
+html {
+  background: #fff6e7;
+  color: #26354b;
+  overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #fff6e7;
+  overflow-x: clip;
+  font-family: var(--font-sans);
+  color: #26354b;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+section[id] {
+  scroll-margin-top: var(--header-offset);
+}
+
+:focus-visible {
+  outline: 3px solid #26354b;
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Компактный масштаб на компьютере: около 90% без transform: scale. */
+@media (min-width: 68.75rem) {
+  :root {
+    --header-offset: 72px;
+  }
+  html {
+    font-size: 90%;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .decor-float {
+    animation: decor-float 6s ease-in-out infinite;
+  }
+  .decor-float-slow {
+    animation: decor-float 9s ease-in-out -2s infinite;
+  }
+  .decor-drift {
+    animation: decor-drift 14s ease-in-out infinite;
+  }
+  .decor-twinkle {
+    animation: decor-twinkle 3.6s ease-in-out infinite;
+  }
+  .decor-sway {
+    animation: decor-sway 5s ease-in-out infinite;
+  }
+  .decor-spin {
+    animation: decor-spin 40s linear infinite;
+  }
+}
+
+@keyframes decor-float {
+  50% {
+    transform: translateY(-12px);
+  }
+}
+@keyframes decor-drift {
+  50% {
+    transform: translateX(22px);
+  }
+}
+@keyframes decor-twinkle {
+  50% {
+    transform: scale(0.78) rotate(14deg);
+    opacity: 0.75;
+  }
+}
+@keyframes decor-sway {
+  0%,
+  100% {
+    transform: rotate(-6deg);
+  }
+  50% {
+    transform: rotate(6deg);
+  }
+}
+@keyframes decor-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Сохранённый русский язык: прячем казахский текст на долю секунды до гидратации. */
+html[data-lang-pending] body {
+  opacity: 0;
+  animation: lang-reveal 0s linear 1.2s forwards;
+}
+@keyframes lang-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Органические фигуры для фото и иллюстраций. */
+.shape-blob,
+.shape-cloud,
+.shape-arch,
+.shape-flower,
+.shape-pebble {
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+.shape-blob {
+  --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M51 1c17-1 34 6 42 21 8 14 7 30 3 45-4 14-13 26-28 30-16 5-36 3-49-7C5 79-1 62 1 45 3 29 12 14 26 7c8-4 16-6 25-6Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--shape);
+  mask-image: var(--shape);
+}
+.shape-cloud {
+  --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Ccircle cx='28' cy='32' r='27'/%3E%3Ccircle cx='66' cy='28' r='27'/%3E%3Ccircle cx='76' cy='66' r='24'/%3E%3Ccircle cx='38' cy='72' r='27'/%3E%3Crect x='22' y='24' width='56' height='56'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--shape);
+  mask-image: var(--shape);
+}
+.shape-arch {
+  --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 94V48C0 21 22 0 50 0s50 21 50 48v46c0 3-3 6-6 6H6c-3 0-6-3-6-6Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--shape);
+  mask-image: var(--shape);
+}
+.shape-flower {
+  --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Ccircle cx='50' cy='22' r='22'/%3E%3Ccircle cx='78' cy='36' r='22'/%3E%3Ccircle cx='78' cy='64' r='22'/%3E%3Ccircle cx='50' cy='78' r='22'/%3E%3Ccircle cx='22' cy='64' r='22'/%3E%3Ccircle cx='22' cy='36' r='22'/%3E%3Ccircle cx='50' cy='50' r='32'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--shape);
+  mask-image: var(--shape);
+}
+.shape-pebble {
+  --shape: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M14 8C28-1 72-3 87 7c13 9 14 29 12 47-2 17-6 34-22 41-17 7-46 7-62-2C1 85-1 66 1 47 2 32 3 15 14 8Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: var(--shape);
+  mask-image: var(--shape);
+}
+
+@layer components {
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 3rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.15;
+    text-align: center;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      background-color 0.2s ease;
+  }
+  .btn:active {
+    transform: translateY(1px) scale(0.98);
+  }
+  .btn-whatsapp {
+    background: var(--color-wa);
+    color: #fff;
+    box-shadow: 0 12px 24px -12px rgb(15 127 64 / 0.75);
+  }
+  .btn-ink {
+    background: var(--color-ink);
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+  }
+  .btn-light {
+    background: #fff;
+    color: var(--color-ink);
+    box-shadow: var(--shadow-soft);
+  }
+  .btn-sun {
+    background: var(--color-sun);
+    color: var(--color-ink);
+    box-shadow: var(--shadow-soft);
+  }
+  @media (hover: hover) {
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lift);
+    }
+    .btn-whatsapp:hover {
+      background: var(--color-wa-hover);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
