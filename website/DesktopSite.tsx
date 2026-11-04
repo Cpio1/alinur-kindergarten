@@ -16,7 +16,7 @@ export function DesktopSite({ media }: { media: SiteMedia }) {
       <Header />
       <main>
         <Hero image={media.hero} />
-        <About image={media.gallery[0] ?? null} second={media.second} />
+        <About image={media.gallery[0]?.src ?? null} second={media.second} />
         <Info />
         <Groups />
         <Meals />

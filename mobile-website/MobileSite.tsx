@@ -16,7 +16,7 @@ export function MobileSite({ media }: { media: SiteMedia }) {
       <MobileHeader />
       <main>
         <MobileHero image={media.hero} />
-        <MobileAbout image={media.gallery[0] ?? null} second={media.second} />
+        <MobileAbout image={media.gallery[0]?.src ?? null} second={media.second} />
         <MobileInfo />
         <MobileGroups />
         <MobileMeals />

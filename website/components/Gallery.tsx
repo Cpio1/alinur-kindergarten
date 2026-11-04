@@ -5,11 +5,13 @@ import Image from "next/image";
 import { ChevronDown, ChevronUp, ImageIcon, MapPin } from "lucide-react";
 import { SITE } from "@/shared/content/site";
 import { useLang } from "@/shared/i18n/LanguageProvider";
+import { toColumns, type GalleryImage } from "@/shared/lib/media-types";
 import { Flower, Star } from "@/shared/ui/Decor";
 import { Lightbox } from "@/shared/ui/Lightbox";
 import { Reveal } from "@/shared/ui/Reveal";
 
 const INITIAL = 6;
+const COLUMNS = 3;
 
 const radii = [
   "rounded-[3.5rem_1.5rem_3.5rem_1.5rem]",
@@ -20,32 +22,7 @@ const radii = [
   "rounded-[1.5rem_1.5rem_1.5rem_3rem]",
 ];
 
-// Блоки по 6 фото складываются в ровный прямоугольник, через один зеркально.
-const fullBlocks = [
-  ["col-span-3 row-span-2", "col-span-3", "col-span-2", "col-span-1", "col-span-3", "col-span-3"],
-  ["col-span-3", "col-span-3 row-span-2", "col-span-1", "col-span-2", "col-span-3", "col-span-3"],
-];
-
-// Неполный последний блок всё равно занимает строки целиком.
-const lastBlocks: Record<number, string[]> = {
-  1: ["col-span-6"],
-  2: ["col-span-3", "col-span-3"],
-  3: ["col-span-2", "col-span-2", "col-span-2"],
-  4: ["col-span-3", "col-span-3", "col-span-3", "col-span-3"],
-  5: ["col-span-2", "col-span-2", "col-span-2", "col-span-3", "col-span-3"],
-};
-
-function tileClass(index: number, total: number) {
-  const block = Math.floor(index / 6);
-  const remainder = total % 6;
-  const span =
-    remainder && index >= total - remainder
-      ? lastBlocks[remainder][index - (total - remainder)]
-      : fullBlocks[block % 2][index % 6];
-  return `${span} ${radii[index % radii.length]}`;
-}
-
-export function Gallery({ images }: { images: string[] }) {
+export function Gallery({ images }: { images: GalleryImage[] }) {
   const { t } = useLang();
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
@@ -81,28 +58,34 @@ export function Gallery({ images }: { images: string[] }) {
           </Reveal>
         ) : (
           <>
-            <ul className="mt-9 grid grid-flow-dense auto-rows-[12.5rem] grid-cols-6 gap-4">
-              {visible.map((src, index) => (
-                <li key={src} className={`relative overflow-hidden ${tileClass(index, visible.length)}`}>
-                  <Reveal className="h-full w-full" delay={(index % INITIAL) * 0.05} y={16}>
-                    <button
-                      type="button"
-                      aria-label={`${t.gallery.open} ${index + 1}`}
-                      onClick={() => setOpen(index)}
-                      className="group relative block h-full w-full cursor-zoom-in overflow-hidden bg-sky-soft"
-                    >
-                      <Image
-                        src={src}
-                        alt={`${t.gallery.photoAlt} — ${index + 1}`}
-                        fill
-                        sizes="(max-width: 1099px) 16px, 560px"
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </button>
-                  </Reveal>
-                </li>
+            {/* Колонки с настоящими пропорциями: снимки не обрезаются. */}
+            <div className="mt-9 grid grid-cols-3 items-start gap-4">
+              {toColumns(visible, COLUMNS).map((column, columnIndex) => (
+                <ul key={columnIndex} className="flex flex-col gap-4">
+                  {column.map((image) => (
+                    <li key={image.src}>
+                      <Reveal delay={(image.index % INITIAL) * 0.05} y={16}>
+                        <button
+                          type="button"
+                          aria-label={`${t.gallery.open} ${image.index + 1}`}
+                          onClick={() => setOpen(image.index)}
+                          className={`group block w-full cursor-zoom-in overflow-hidden bg-sky-soft shadow-soft ${radii[image.index % radii.length]}`}
+                        >
+                          <Image
+                            src={image.src}
+                            alt={`${t.gallery.photoAlt} — ${image.index + 1}`}
+                            width={image.width}
+                            height={image.height}
+                            sizes="(max-width: 1099px) 16px, 380px"
+                            className="h-auto w-full transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </button>
+                      </Reveal>
+                    </li>
+                  ))}
+                </ul>
               ))}
-            </ul>
+            </div>
             {images.length > INITIAL && (
               <div className="mt-8 text-center">
                 <button type="button" onClick={() => setExpanded((value) => !value)} aria-expanded={expanded} className="btn btn-sun text-lg">
@@ -111,7 +94,7 @@ export function Gallery({ images }: { images: string[] }) {
                 </button>
               </div>
             )}
-            <Lightbox images={images} index={open} onChange={setOpen} />
+            <Lightbox images={images.map((image) => image.src)} index={open} onChange={setOpen} />
           </>
         )}
       </div>

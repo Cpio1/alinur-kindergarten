@@ -5,31 +5,42 @@ import Image from "next/image";
 import { ChevronDown, ChevronUp, ImageIcon, MapPin } from "lucide-react";
 import { SITE } from "@/shared/content/site";
 import { useLang } from "@/shared/i18n/LanguageProvider";
+import { toColumns, type GalleryImage, type PlacedImage } from "@/shared/lib/media-types";
 import { Lightbox } from "@/shared/ui/Lightbox";
 import { Reveal } from "@/shared/ui/Reveal";
 
 const INITIAL = 4;
 
-// Широкий кадр, затем пара вертикальных и снова широкий: страница не выглядит плиткой.
-const pattern = [
-  "col-span-2 aspect-[16/10] rounded-[2rem_1rem_2rem_1rem]",
-  "aspect-[4/5] rounded-[1rem_1.75rem_1rem_1rem]",
-  "aspect-[4/5] rounded-[1rem_1rem_1.75rem_1rem]",
-  "col-span-2 aspect-[16/9] rounded-[1rem_2rem_1rem_2rem]",
-  "aspect-square rounded-[1.75rem_1rem_1rem_1rem]",
-  "aspect-square rounded-[1rem_1rem_1rem_1.75rem]",
+const radii = [
+  "rounded-[1rem_1.75rem_1rem_1rem]",
+  "rounded-[1rem_1rem_1.75rem_1rem]",
+  "rounded-[1.75rem_1rem_1rem_1rem]",
+  "rounded-[1rem_1rem_1rem_1.75rem]",
 ];
 
-function tileClass(index: number, total: number) {
-  const aloneInRow = index === total - 1 && index % 3 === 1;
-  return aloneInRow ? pattern[3] : pattern[index % pattern.length];
-}
-
-export function MobileGallery({ images }: { images: string[] }) {
+export function MobileGallery({ images }: { images: GalleryImage[] }) {
   const { t } = useLang();
   const [expanded, setExpanded] = useState(false);
   const [open, setOpen] = useState<number | null>(null);
   const visible = expanded ? images : images.slice(0, INITIAL);
+
+  const tile = (image: PlacedImage, radius: string, sizes: string) => (
+    <button
+      type="button"
+      aria-label={`${t.gallery.open} ${image.index + 1}`}
+      onClick={() => setOpen(image.index)}
+      className={`block w-full overflow-hidden bg-sky-soft ${radius}`}
+    >
+      <Image
+        src={image.src}
+        alt={`${t.gallery.photoAlt} — ${image.index + 1}`}
+        width={image.width}
+        height={image.height}
+        sizes={sizes}
+        className="h-auto w-full"
+      />
+    </button>
+  );
 
   return (
     <section id="gallery" className="relative overflow-hidden bg-milk py-6">
@@ -58,33 +69,28 @@ export function MobileGallery({ images }: { images: string[] }) {
           </Reveal>
         ) : (
           <>
-            <ul className="mt-3.5 grid grid-cols-2 gap-2">
-              {visible.map((src, index) => (
-                <li key={src} className={`relative overflow-hidden bg-sky-soft ${tileClass(index, visible.length)}`}>
-                  <button
-                    type="button"
-                    aria-label={`${t.gallery.open} ${index + 1}`}
-                    onClick={() => setOpen(index)}
-                    className="absolute inset-0 block h-full w-full"
-                  >
-                    <Image
-                      src={src}
-                      alt={`${t.gallery.photoAlt} — ${index + 1}`}
-                      fill
-                      sizes="(min-width: 1100px) 16px, (min-width: 640px) 640px, 100vw"
-                      className="object-cover"
-                    />
-                  </button>
-                </li>
+            {/* Первый кадр на всю ширину, остальные в двух компактных колонках. */}
+            <div className="mt-3.5">
+              {tile({ ...visible[0], index: 0 }, "rounded-[2rem_1rem_2rem_1rem]", "(min-width: 1100px) 16px, (min-width: 640px) 608px, 100vw")}
+            </div>
+            <div className="mt-2 grid grid-cols-2 items-start gap-2">
+              {toColumns(visible.slice(1), 2, 1).map((column, columnIndex) => (
+                <ul key={columnIndex} className="flex flex-col gap-2">
+                  {column.map((image) => (
+                    <li key={image.src}>
+                      {tile(image, radii[image.index % radii.length], "(min-width: 1100px) 16px, (min-width: 640px) 300px, 50vw")}
+                    </li>
+                  ))}
+                </ul>
               ))}
-            </ul>
+            </div>
             {images.length > INITIAL && (
               <button type="button" onClick={() => setExpanded((value) => !value)} aria-expanded={expanded} className="btn btn-sun mt-3 w-full">
                 {expanded ? t.gallery.less : t.gallery.more}
                 {expanded ? <ChevronUp size={19} aria-hidden="true" /> : <ChevronDown size={19} aria-hidden="true" />}
               </button>
             )}
-            <Lightbox images={images} index={open} onChange={setOpen} />
+            <Lightbox images={images.map((image) => image.src)} index={open} onChange={setOpen} />
           </>
         )}
       </div>
