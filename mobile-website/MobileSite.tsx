@@ -20,7 +20,7 @@ export function MobileSite({ media }: { media: SiteMedia }) {
         <MobileInfo />
         <MobileGroups />
         <MobileMeals />
-        <MobileGallery images={media.gallery} />
+        <MobileGallery />
         <MobileDocuments />
         <MobileContact />
       </main>

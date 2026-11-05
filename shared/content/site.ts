@@ -5,6 +5,7 @@ export const SITE = {
   phoneHref: "tel:+77029685555",
   whatsappHref: "https://wa.me/77029685555",
   twoGisHref: "https://2gis.kz/almaty/gallery/geo/70000001103338236/photoId/30258560297444760",
+  twoGisGalleryHref: "https://2gis.kz/almaty/gallery/firm/70000001103338236/photoId/30258560267175819",
   map: {
     // Идентификатор и координаты взяты из карточки организации в 2ГИС.
     firmId: "70000001103338236",

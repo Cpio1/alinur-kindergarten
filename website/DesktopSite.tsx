@@ -20,7 +20,7 @@ export function DesktopSite({ media }: { media: SiteMedia }) {
         <Info />
         <Groups />
         <Meals />
-        <Gallery images={media.gallery} />
+        <Gallery />
         <Documents />
         <Contact />
       </main>
